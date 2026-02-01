@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { BASE_URL } from '..';
-
+import { BASE_URL } from "..";
 
 const Signup = () => {
   const [user, setUser] = useState({
@@ -13,112 +12,126 @@ const Signup = () => {
     confirmPassword: "",
     gender: "",
   });
+
   const navigate = useNavigate();
-  const handleCheckbox = (gender) => {
-    setUser({ ...user, gender });
-  }
+
   const onSubmitHandler = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${BASE_URL}/api/v1/user/register`, user, {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        withCredentials: true
-      });
+      const res = await axios.post(
+        `${BASE_URL}/api/v1/user/register`,
+        user,
+        {
+          headers: { "Content-Type": "application/json" },
+          withCredentials: true,
+        }
+      );
+
       if (res.data.success) {
-        navigate("/login");
         toast.success(res.data.message);
+        navigate("/login");
       }
     } catch (error) {
-      toast.error(error.response.data.message);
-      console.log(error);
+      toast.error(error?.response?.data?.message || "Signup failed");
     }
-    setUser({
-      fullName: "",
-      username: "",
-      password: "",
-      confirmPassword: "",
-      gender: "",
-    })
-  }
+  };
+
   return (
-    <div className="min-w-96 mx-auto">
-      <div className='w-full p-6 rounded-lg shadow-md bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-md bg-opacity-10 border border-gray-100'>
-        <h1 className='text-3xl font-bold text-center'>Signup</h1>
-        <form onSubmit={onSubmitHandler} action="">
-          <div>
-            <label className='label p-2'>
-              <span className='text-base label-text'>Full Name</span>
-            </label>
-            <input
-              value={user.fullName}
-              onChange={(e) => setUser({ ...user, fullName: e.target.value })}
-              className='w-full input input-bordered h-10'
-              type="text"
-              placeholder='Full Name' />
-          </div>
-          <div>
-            <label className='label p-2'>
-              <span className='text-base label-text'>Username</span>
-            </label>
-            <input
-              value={user.username}
-              onChange={(e) => setUser({ ...user, username: e.target.value })}
-              className='w-full input input-bordered h-10'
-              type="text"
-              placeholder='Username' />
-          </div>
-          <div>
-            <label className='label p-2'>
-              <span className='text-base label-text'>Password</span>
-            </label>
-            <input
-              value={user.password}
-              onChange={(e) => setUser({ ...user, password: e.target.value })}
-              className='w-full input input-bordered h-10'
-              type="password"
-              placeholder='Password' />
-          </div>
-          <div>
-            <label className='label p-2'>
-              <span className='text-base label-text'>Confirm Password</span>
-            </label>
-            <input
-              value={user.confirmPassword}
-              onChange={(e) => setUser({ ...user, confirmPassword: e.target.value })}
-              className='w-full input input-bordered h-10'
-              type="password"
-              placeholder='Confirm Password' />
-          </div>
-          <div className='flex items-center my-4'>
-            <div className='flex items-center'>
-              <p>Male</p>
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <div className="w-full max-w-md p-6 rounded-xl shadow-lg bg-black/60 backdrop-blur-md border border-white/20">
+        <h1 className="text-3xl font-bold text-center text-white mb-4">
+          Signup
+        </h1>
+
+        <form onSubmit={onSubmitHandler} className="space-y-3">
+          <input
+            value={user.fullName}
+            onChange={(e) =>
+              setUser({ ...user, fullName: e.target.value })
+            }
+            className="w-full px-3 py-2 rounded-md bg-gray-800 text-white outline-none"
+            type="text"
+            placeholder="Full Name"
+            required
+          />
+
+          <input
+            value={user.username}
+            onChange={(e) =>
+              setUser({ ...user, username: e.target.value })
+            }
+            className="w-full px-3 py-2 rounded-md bg-gray-800 text-white outline-none"
+            type="text"
+            placeholder="Username"
+            required
+          />
+
+          <input
+            value={user.password}
+            onChange={(e) =>
+              setUser({ ...user, password: e.target.value })
+            }
+            className="w-full px-3 py-2 rounded-md bg-gray-800 text-white outline-none"
+            type="password"
+            placeholder="Password"
+            required
+          />
+
+          <input
+            value={user.confirmPassword}
+            onChange={(e) =>
+              setUser({ ...user, confirmPassword: e.target.value })
+            }
+            className="w-full px-3 py-2 rounded-md bg-gray-800 text-white outline-none"
+            type="password"
+            placeholder="Confirm Password"
+            required
+          />
+
+          {/* Gender */}
+          <div className="flex gap-6 text-white text-sm">
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
-                type="checkbox"
+                type="radio"
+                name="gender"
                 checked={user.gender === "male"}
-                onChange={() => handleCheckbox("male")}
-                defaultChecked
-                className="checkbox mx-2" />
-            </div>
-            <div className='flex items-center'>
-              <p>Female</p>
+                onChange={() =>
+                  setUser({ ...user, gender: "male" })
+                }
+              />
+              Male
+            </label>
+
+            <label className="flex items-center gap-2 cursor-pointer">
               <input
-                type="checkbox"
+                type="radio"
+                name="gender"
                 checked={user.gender === "female"}
-                onChange={() => handleCheckbox("female")}
-                defaultChecked
-                className="checkbox mx-2" />
-            </div>
+                onChange={() =>
+                  setUser({ ...user, gender: "female" })
+                }
+              />
+              Female
+            </label>
           </div>
-          <p className='text-center my-2'>Already have an account? <Link to="/login"> login </Link></p>
-          <div>
-            <button type='submit' className='btn btn-block btn-sm mt-2 border border-slate-700'>Singup</button>
-          </div>
+
+          <button
+            type="submit"
+            className="w-full py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white font-semibold"
+          >
+            Signup
+          </button>
+
+          <p className="text-center text-gray-300 text-sm">
+            Already have an account?{" "}
+            <Link className="text-blue-400" to="/login">
+              Login
+            </Link>
+          </p>
         </form>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Signup
+export default Signup;

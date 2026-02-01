@@ -8,7 +8,7 @@ import io from "socket.io-client";
 import { setSocket } from "./redux/socketSlice";
 import { setOnlineUsers } from "./redux/userSlice";
 import { BASE_URL } from ".";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
   const { authUser } = useSelector((store) => store.user);
@@ -42,9 +42,17 @@ function App() {
     <BrowserRouter>
       <div className="p-4 min-h-screen">
         <Routes>
-          <Route path="/" element={<HomePage />} />
+          {/* 🔥 Default route → Signup */}
+          <Route path="/" element={<Navigate to="/signup" />} />
+
           <Route path="/signup" element={<Signup />} />
           <Route path="/login" element={<Login />} />
+
+          {/* 🔐 Protected Home */}
+          <Route
+            path="/home"
+            element={authUser ? <HomePage /> : <Navigate to="/login" />}
+          />
         </Routes>
       </div>
     </BrowserRouter>
