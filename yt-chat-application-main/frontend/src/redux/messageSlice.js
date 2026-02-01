@@ -1,15 +1,25 @@
-import {createSlice} from "@reduxjs/toolkit";
+import { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { setMessages } from "../redux/messageSlice";
 
-const messageSlice = createSlice({
-    name:"message",
-    initialState:{
-        messages:null,
-    },
-    reducers:{
-        setMessages:(state,action)=>{
-            state.messages = action.payload;
-        }
-    }
-});
-export const {setMessages} = messageSlice.actions;
-export default messageSlice.reducer;
+const useGetRealTimeMessage = () => {
+  const { socket } = useSelector((store) => store.socket);
+  const { messages } = useSelector((store) => store.message);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewMessage = (newMessage) => {
+      dispatch(setMessages([...(messages || []), newMessage]));
+    };
+
+    socket.on("newMessage", handleNewMessage);
+
+    return () => {
+      socket.off("newMessage", handleNewMessage);
+    };
+  }, [dispatch, socket, messages]);
+};
+
+export default useGetRealTimeMessage;
