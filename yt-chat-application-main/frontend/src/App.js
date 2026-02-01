@@ -1,6 +1,5 @@
 import Signup from "./components/Signup";
 import "./App.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./components/HomePage";
 import Login from "./components/Login";
 import { useEffect } from "react";
@@ -9,21 +8,7 @@ import io from "socket.io-client";
 import { setSocket } from "./redux/socketSlice";
 import { setOnlineUsers } from "./redux/userSlice";
 import { BASE_URL } from ".";
-
-const router = createBrowserRouter([
-  {
-    path: "/",
-    element: <HomePage />,
-  },
-  {
-    path: "/signup",
-    element: <Signup />,
-  },
-  {
-    path: "/login",
-    element: <Login />,
-  },
-]);
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 function App() {
   const { authUser } = useSelector((store) => store.user);
@@ -44,21 +29,25 @@ function App() {
         dispatch(setOnlineUsers(onlineUsers));
       });
 
-      return () => {
-        socketio.close();
-      };
+      return () => socketio.close();
     } else {
       if (socket) {
         socket.close();
         dispatch(setSocket(null));
       }
     }
-  }, [authUser, dispatch, socket]); // ✅ FIXED deps
+  }, [authUser, dispatch, socket]);
 
   return (
-    <div className="p-4 h-screen flex items-center justify-center">
-      <RouterProvider router={router} />
-    </div>
+    <BrowserRouter>
+      <div className="p-4 min-h-screen">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </div>
+    </BrowserRouter>
   );
 }
 
