@@ -10,8 +10,8 @@ import { persistStore } from "redux-persist";
 
 let persistor = persistStore(store);
 
-// ⚠️ अभी backend deploy नहीं है, इसलिए ठीक है
-export const BASE_URL = "http://localhost:8080";
+// ⚠️ अभी backend deploy नहीं है, इसलिए local backend का port इस्तेमाल करें
+export const BASE_URL = "http://localhost:5000";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
